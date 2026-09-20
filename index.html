@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Football & Tennis Analysis</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 50% -10%, rgba(45, 220, 180, 0.22), transparent 38%),
+        radial-gradient(circle at 100% 100%, rgba(0, 170, 145, 0.14), transparent 35%),
+        #061312;
+
+      color: #effffc;
+      font-family: "Inter", sans-serif;
+    }
+
+    /* =========================
+       MAIN SCREEN
+    ========================== */
+
+    .page {
+      width: 100%;
+      height: 100dvh;
+      min-height: 560px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 14px;
+    }
+
+    .noise {
+      position: absolute;
+      inset: 0;
+      opacity: 0.035;
+      pointer-events: none;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          rgba(255,255,255,.4) 0px,
+          rgba(255,255,255,.4) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+    }
+
+    /* =========================
+       FLOATING GLOW ELEMENTS
+    ========================== */
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(1px);
+      pointer-events: none;
+    }
+
+    .orb.one {
+      width: 100px;
+      height: 100px;
+      top: 5%;
+      left: -45px;
+      background: rgba(43, 220, 180, .13);
+      box-shadow: 0 0 70px rgba(43, 220, 180, .35);
+      animation: floatOne 6s ease-in-out infinite;
+    }
+
+    .orb.two {
+      width: 75px;
+      height: 75px;
+      right: -25px;
+      top: 28%;
+      background: rgba(50, 255, 205, .10);
+      box-shadow: 0 0 60px rgba(50, 255, 205, .30);
+      animation: floatTwo 5s ease-in-out infinite;
+    }
+
+    .orb.three {
+      width: 55px;
+      height: 55px;
+      bottom: 5%;
+      left: 8%;
+      background: rgba(27, 180, 160, .08);
+      box-shadow: 0 0 50px rgba(27, 180, 160, .25);
+      animation: floatThree 7s ease-in-out infinite;
+    }
+
+    @keyframes floatOne {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(22px); }
+    }
+
+    @keyframes floatTwo {
+      0%,100% { transform: translate(0,0); }
+      50% { transform: translate(-15px,25px); }
+    }
+
+    @keyframes floatThree {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    /* =========================
+       MAIN CARD
+    ========================== */
+
+    .card {
+      width: min(100%, 430px);
+      max-height: 96dvh;
+      position: relative;
+      z-index: 5;
+
+      padding: 18px 17px 16px;
+
+      border: 1px solid rgba(96, 255, 220, .22);
+      border-radius: 25px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(16, 44, 40, .90),
+          rgba(4, 20, 18, .94)
+        );
+
+      box-shadow:
+        0 25px 80px rgba(0,0,0,.55),
+        inset 0 1px 0 rgba(255,255,255,.07),
+        0 0 45px rgba(31, 210, 175, .07);
+
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* =========================
+       TOP STATUS
+    ========================== */
+
+    .status {
+      width: fit-content;
+      margin: 0 auto 12px;
+
+      display: flex;
+      align-items: center;
+      gap: 7px;
+
+      padding: 6px 11px;
+      border-radius: 50px;
+
+      background: rgba(54, 226, 187, .07);
+      border: 1px solid rgba(54, 226, 187, .18);
+
+      color: #7dffdc;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #54ffd5;
+      box-shadow: 0 0 10px #54ffd5;
+      animation: blink 1.2s infinite;
+    }
+
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50% { opacity: .3; }
+    }
+
+    /* =========================
+       LOGO
+    ========================== */
+
+    .logo-wrap {
+      width: 82px;
+      height: 82px;
+      margin: 0 auto 10px;
+
+      position: relative;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .logo-wrap::before {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+
+      background: rgba(47, 235, 193, .09);
+      box-shadow:
+        0 0 25px rgba(47, 235, 193, .25),
+        0 0 65px rgba(47, 235, 193, .10);
+
+      animation: logoGlow 3s ease-in-out infinite;
+    }
+
+    .logo-ring {
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      border: 1px solid rgba(88, 255, 218, .42);
+      animation: rotateRing 8s linear infinite;
+    }
+
+    .logo {
+      position: relative;
+      z-index: 2;
+
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+
+      border-radius: 50%;
+
+      filter:
+        drop-shadow(0 0 10px rgba(68,255,210,.25));
+    }
+
+    @keyframes logoGlow {
+      0%,100% { transform: scale(.96); opacity: .75; }
+      50% { transform: scale(1.04); opacity: 1; }
+    }
+
+    @keyframes rotateRing {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* =========================
+       HEADING
+    ========================== */
+
+    .eyebrow {
+      text-align: center;
+      color: #73dfc4;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 2.4px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    h1 {
+      text-align: center;
+
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(21px, 6vw, 29px);
+      line-height: 1.15;
+      letter-spacing: .5px;
+
+      color: #f3fffc;
+
+      text-shadow:
+        0 0 22px rgba(84,255,214,.14);
+    }
+
+    .subheading {
+      text-align: center;
+      margin: 7px auto 14px;
+      max-width: 320px;
+
+      color: rgba(220, 245, 239, .66);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    /* =========================
+       SPORTS
+    ========================== */
+
+    .sports {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .sport {
+      padding: 6px 11px;
+      border-radius: 8px;
+
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .8px;
+
+      color: #9affe2;
+
+      background: rgba(65, 232, 194, .065);
+      border: 1px solid rgba(65, 232, 194, .16);
+    }
+
+    /* =========================
+       HIGHLIGHTS
+    ========================== */
+
+    .highlights {
+      padding: 13px 13px 11px;
+      border-radius: 17px;
+
+      background: rgba(0,0,0,.17);
+      border: 1px solid rgba(130,255,230,.08);
+    }
+
+    .highlight-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      margin-bottom: 10px;
+    }
+
+    .highlight-title span:first-child {
+      font-family: "Orbitron", sans-serif;
+      font-size: 9px;
+      letter-spacing: 1.4px;
+      color: #eafff9;
+    }
+
+    .verified {
+      font-size: 8px;
+      color: #64eecb;
+      letter-spacing: .7px;
+    }
+
+    .metric {
+      margin-bottom: 9px;
+    }
+
+    .metric:last-child {
+      margin-bottom: 0;
+    }
+
+    .metric-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      margin-bottom: 5px;
+    }
+
+    .metric-name {
+      font-size: 9px;
+      font-weight: 600;
+      color: rgba(226,247,242,.72);
+    }
+
+    .metric-value {
+      font-family: "Orbitron", sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      color: #8affdd;
+    }
+
+    .bar {
+      height: 5px;
+      width: 100%;
+
+      border-radius: 20px;
+      overflow: hidden;
+
+      background: rgba(255,255,255,.06);
+    }
+
+    .fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+
+      background:
+        linear-gradient(
+          90deg,
+          #168d76,
+          #43e9bf,
+          #9affdf
+        );
+
+      box-shadow:
+        0 0 10px rgba(55,235,194,.45);
+
+      animation: fillBar 1.8s cubic-bezier(.2,.8,.2,1) forwards;
+    }
+
+    .fill.one { animation-delay: .3s; --target: 96%; }
+    .fill.two { animation-delay: .55s; --target: 98.32%; }
+    .fill.three { animation-delay: .8s; --target: 94%; }
+
+    @keyframes fillBar {
+      from { width: 0; }
+      to { width: var(--target); }
+    }
+
+    /* =========================
+       CTA
+    ========================== */
+
+    .cta {
+      width: 100%;
+      margin-top: 14px;
+
+      min-height: 48px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      border-radius: 13px;
+
+      text-decoration: none;
+
+      font-family: "Orbitron", sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .9px;
+
+      color: #02100d;
+
+      background:
+        linear-gradient(
+          110deg,
+          #48d9b5,
+          #91ffe0,
+          #45d8b4
+        );
+
+      box-shadow:
+        0 8px 28px rgba(45,220,180,.18),
+        inset 0 1px 0 rgba(255,255,255,.55);
+
+      position: relative;
+      overflow: hidden;
+
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .cta::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -80%;
+      width: 50%;
+      height: 100%;
+
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.55),
+        transparent
+      );
+
+      transform: skewX(-20deg);
+      animation: shine 3.2s infinite;
+    }
+
+    @keyframes shine {
+      0% { left: -80%; }
+      35%,100% { left: 140%; }
+    }
+
+    .cta:active {
+      transform: scale(.97);
+    }
+
+    .cta-text {
+      position: relative;
+      z-index: 2;
+    }
+
+    .cta-arrow {
+      position: relative;
+      z-index: 2;
+      margin-left: 8px;
+      font-size: 14px;
+    }
+
+    /* =========================
+       FOOTER
+    ========================== */
+
+    .footer {
+      text-align: center;
+      margin-top: 9px;
+
+      color: rgba(197,231,224,.42);
+      font-size: 7.5px;
+      letter-spacing: .7px;
+    }
+
+    /* =========================
+       RESPONSIVE SMALL PHONES
+    ========================== */
+
+    @media (max-height: 650px) {
+      .page {
+        padding: 9px;
+      }
+
+      .card {
+        padding: 13px 14px;
+        border-radius: 21px;
+      }
+
+      .status {
+        margin-bottom: 7px;
+      }
+
+      .logo-wrap {
+        width: 66px;
+        height: 66px;
+        margin-bottom: 6px;
+      }
+
+      .logo {
+        width: 58px;
+        height: 58px;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      .subheading {
+        margin: 5px auto 9px;
+      }
+
+      .sports {
+        margin-bottom: 9px;
+      }
+
+      .highlights {
+        padding: 10px 11px;
+      }
+
+      .cta {
+        margin-top: 10px;
+        min-height: 43px;
+      }
+
+      .footer {
+        margin-top: 6px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="page">
+
+    <div class="noise"></div>
+
+    <!-- Floating ambient elements -->
+    <div class="orb one"></div>
+    <div class="orb two"></div>
+    <div class="orb three"></div>
+
+    <section class="card">
+
+      <div class="status">
+        <span class="live-dot"></span>
+        LIVE ANALYSIS ACTIVE
+      </div>
+
+      <div class="logo-wrap">
+        <div class="logo-ring"></div>
+        <img
+          src="logo.png"
+          alt="Channel Logo"
+          class="logo"
+        />
+      </div>
+
+      <div class="eyebrow">
+        Premium Match Intelligence
+      </div>
+
+      <h1>
+        Football & Tennis<br>
+        Match Analysis
+      </h1>
+
+      <p class="subheading">
+        Match reports, insights &amp; pre-match analysis —
+        delivered with precision.
+      </p>
+
+      <div class="sports">
+        <div class="sport">⚽ FOOTBALL</div>
+        <div class="sport">🎾 TENNIS</div>
+        <div class="sport">◈ REPORTS</div>
+      </div>
+
+      <div class="highlights">
+
+        <div class="highlight-title">
+          <span>PERFORMANCE HIGHLIGHTS</span>
+          <span class="verified">● VERIFIED</span>
+        </div>
+
+        <div class="metric">
+          <div class="metric-head">
+            <span class="metric-name">Success Rate</span>
+            <span class="metric-value">96%</span>
+          </div>
+          <div class="bar">
+            <div class="fill one"></div>
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-head">
+            <span class="metric-name">Analysis Score</span>
+            <span class="metric-value">98.32%</span>
+          </div>
+          <div class="bar">
+            <div class="fill two"></div>
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-head">
+            <span class="metric-name">Match Coverage</span>
+            <span class="metric-value">94%</span>
+          </div>
+          <div class="bar">
+            <div class="fill three"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <a
+        href="https://t.me/+9qjWCxYCz3IwMTJl"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="cta"
+      >
+        <span class="cta-text">ENTER THE INNER CIRCLE</span>
+        <span class="cta-arrow">→</span>
+      </a>
+
+      <div class="footer">
+        FOOTBALL • TENNIS • ANALYSIS • REPORTS
+      </div>
+
+    </section>
+
+  </main>
+
+</body>
+</html>
